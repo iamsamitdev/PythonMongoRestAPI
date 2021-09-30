@@ -4,29 +4,27 @@ from bson import json_util
 from bson.objectid import ObjectId
 
 app = Flask(__name__)
-
-# Config Mongodb
-app.config["MONGO_URI"] = "mongodb://localhost:27017/pythoneventdb"
+# app.config["MONGO_URI"] = "mongodb://localhost:27017/siminar"
+app.config["MONGO_URI"] = "mongodb://samit:123456@localhost:27017/pythoneventdb"
 mongo = PyMongo(app)
 
 
-# สร้าง Router
+# ส่วนของการ Create Users
 @app.route('/users', methods=['POST'])
 def create_user():
 
-    # print(request.json)
+    # Reciving data
     # return {'message': 'received'}
-    # รับค่าจาก payload
-    fullname = request.json['fullname']
+
+    fullnname = request.json['fullname']
     email = request.json['email']
     tel = request.json['tel']
     created_at = request.json['created_at']
 
-    # ตรวจสอบค่าว่ามีการส่งมาหรือไม่
-    if fullname and email and tel:
+    if fullnname and email and tel:
         id = mongo.db.users.insert(
             {
-                'fullname': fullname,
+                'fullname': fullnname,
                 'email': email,
                 'tel': tel,
                 'created_at': created_at
@@ -35,7 +33,7 @@ def create_user():
 
         response = jsonify({
             '_id': str(id),
-            'fullname': fullname,
+            'fullname': fullnname,
             'email': email,
             'tel': tel,
             'created_at': created_at
@@ -43,6 +41,9 @@ def create_user():
 
         response.status_code = 201
         return response
+
+    else:
+        return not_found()
 
 
 # ส่วนของการ GET Users ทั้งหมด
