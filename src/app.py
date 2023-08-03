@@ -19,9 +19,9 @@ def create_user():
     fullnname = request.json['fullname']
     email = request.json['email']
     tel = request.json['tel']
-    created_at = request.json['created_at']
-
     if fullnname and email and tel:
+        created_at = request.json['created_at']
+
         id = mongo.db.users.insert(
             {
                 'fullname': fullnname,
@@ -76,7 +76,7 @@ def update_user(_id):
             {'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
             {'$set': {'fullname': fullname, 'email': email, 'tel': tel}}
         )
-        response = jsonify({'message': 'User ' + _id + ' Updated Successfuly'})
+        response = jsonify({'message': f'User {_id} Updated Successfuly'})
         response.status_code = 200
         return response
     else:
@@ -87,17 +87,14 @@ def update_user(_id):
 @app.route('/users/<id>', methods=['DELETE'])
 def delete_user(id):
     mongo.db.users.delete_one({'_id': ObjectId(id)})
-    response = jsonify({'message': 'User ' + id + ' Deleted Successfully'})
+    response = jsonify({'message': f'User {id} Deleted Successfully'})
     response.status_code = 200
     return response
 
 
 @app.errorhandler(404)
 def not_found(error=None):
-    message = {
-        'message': 'Resource Not Found ' + request.url,
-        'status': 404
-    }
+    message = {'message': f'Resource Not Found {request.url}', 'status': 404}
     response = jsonify(message)
     response.status_code = 404
     return response
